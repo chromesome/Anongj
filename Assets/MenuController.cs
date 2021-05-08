@@ -7,7 +7,8 @@ using Photon.Realtime;
 
 public class MenuController : MonoBehaviourPunCallbacks
 {
-    //[SerializeField] private string versionName = "0.1";
+    [SerializeField] private byte maxPlayers = 5;
+
     [SerializeField] private GameObject usernameMenu;
     [SerializeField] private GameObject controlPanel;
     
@@ -16,6 +17,7 @@ public class MenuController : MonoBehaviourPunCallbacks
     [SerializeField] private InputField joinGameInput;
 
     [SerializeField] private GameObject startButton;
+
 
     private void Awake()
     {
@@ -54,6 +56,19 @@ public class MenuController : MonoBehaviourPunCallbacks
 
     public void CreateGame()
     {
+        PhotonNetwork.CreateRoom(createGameInput.text, new RoomOptions() { MaxPlayers = maxPlayers }, null);
+    }
 
+    public void JoinGame()
+    {
+        RoomOptions roomOptions = new RoomOptions();
+        roomOptions.MaxPlayers = maxPlayers;
+        PhotonNetwork.JoinOrCreateRoom(joinGameInput.text, roomOptions, TypedLobby.Default);
+    }
+
+    public override void OnJoinedRoom()
+    {
+        base.OnJoinedRoom();
+        PhotonNetwork.LoadLevel("MainGame");
     }
 }
