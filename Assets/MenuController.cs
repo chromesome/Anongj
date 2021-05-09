@@ -19,6 +19,8 @@ public class MenuController : MonoBehaviourPunCallbacks
     [SerializeField] private GameObject startButton;
 
 
+    [SerializeField] private RoomButton roomButton; // Reemplazar con scrollview list para mostrar lista de habitaciones, o invitar solo por codigo? (amogus)
+
     private void Awake()
     {
         PhotonNetwork.ConnectUsingSettings();
@@ -64,6 +66,28 @@ public class MenuController : MonoBehaviourPunCallbacks
         RoomOptions roomOptions = new RoomOptions();
         roomOptions.MaxPlayers = maxPlayers;
         PhotonNetwork.JoinOrCreateRoom(joinGameInput.text, roomOptions, TypedLobby.Default);
+    }
+
+    public void RefreshRoomList()
+    {
+        // TODO esto parece que no funciona, mejor manejarse solo con contraseña corte amongus?
+        PhotonNetwork.GetCustomRoomList(TypedLobby.Default, "");
+    }
+
+    public override void OnRoomListUpdate(List<RoomInfo> roomList)
+    {
+        base.OnRoomListUpdate(roomList);
+
+        foreach (RoomInfo room in roomList)
+        {
+            roomButton.setRoomInfo(room);
+            break;
+        }
+    }
+
+    public void SelectGameRoom(RoomButton roomButton)
+    {
+        joinGameInput.text = roomButton.getRoomName();
     }
 
     public override void OnJoinedRoom()
