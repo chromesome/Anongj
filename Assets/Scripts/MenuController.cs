@@ -39,6 +39,8 @@ namespace Com.WhyJam.Anongj
         private void Start()
         {
             PhotonNetwork.ConnectUsingSettings();
+            usernameMenu.SetActive(false);
+            controlPanel.SetActive(false);
         }
 
         public override void OnConnectedToMaster()
