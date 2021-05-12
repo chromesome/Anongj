@@ -15,6 +15,7 @@ public class AnonController : MonoBehaviour
     {
         rb = GetComponent<Rigidbody2D>();
         coll = GetComponent<Collider2D>();
+        aAnim = GetComponent<AnonAnimator>();
     }
 
     // Update is called once per frame
