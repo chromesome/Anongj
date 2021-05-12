@@ -39,7 +39,6 @@ namespace Com.WhyJam.Anongj
         private void Start()
         {
             PhotonNetwork.ConnectUsingSettings();
-            usernameMenu.SetActive(true);
         }
 
         public override void OnConnectedToMaster()
@@ -61,12 +60,19 @@ namespace Com.WhyJam.Anongj
             }
         }
 
+        public void StartTheGame()
+        {
+            usernameMenu.SetActive(true);
+        }
+
         public void SetUserName()
         {
             usernameMenu.SetActive(false);
             PhotonNetwork.NickName = usernameInput.text;
+            controlPanel.SetActive(true);
         }
 
+        // Deprecate
         public void CreateGame()
         {
             PhotonNetwork.CreateRoom(createGameInput.text, new RoomOptions() { MaxPlayers = maxPlayers }, null);
@@ -79,6 +85,7 @@ namespace Com.WhyJam.Anongj
             PhotonNetwork.JoinOrCreateRoom(joinGameInput.text, roomOptions, TypedLobby.Default);
         }
 
+        // Deprecate
         public void RefreshRoomList()
         {
             // TODO esto parece que no funciona, mejor manejarse solo con contraseña corte amongus?
