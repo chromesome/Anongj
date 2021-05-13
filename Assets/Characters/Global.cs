@@ -6,6 +6,8 @@ public class Global : MonoBehaviour
 {
     public Sprite[] faces;
     public Sprite[] shapes;
+
+    public float runSp;
     // Start is called before the first frame update
     void Start()
     {

@@ -16,9 +16,9 @@ public class AnonAnimator : MonoBehaviour
     void Start()
     {
 
-        Global gl = GameObject.FindWithTag("Global").GetComponent<Global>();
-        body.GetComponent<SpriteRenderer>().sprite = gl.shapes[Random.Range(0,4)];
-        face.GetComponent<SpriteRenderer>().sprite = gl.faces[Random.Range(2,5)];
+        //Global gl = GameObject.FindWithTag("Global").GetComponent<Global>();
+        //body.GetComponent<SpriteRenderer>().sprite = gl.shapes[Random.Range(0,4)];
+        //face.GetComponent<SpriteRenderer>().sprite = gl.faces[Random.Range(2,5)];
     }
 
     void Update()
