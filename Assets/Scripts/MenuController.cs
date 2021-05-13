@@ -28,6 +28,7 @@ namespace Com.WhyJam.Anongj
         [SerializeField] private InputField joinGameInput;
 
         [SerializeField] private GameObject startButton;
+        [SerializeField] private Text userName;
 
         [SerializeField] private RoomList roomContentList;
 
@@ -71,6 +72,7 @@ namespace Com.WhyJam.Anongj
         {
             usernameMenu.SetActive(false);
             PhotonNetwork.NickName = usernameInput.text;
+            userName.text += PhotonNetwork.NickName;
             controlPanel.SetActive(true);
         }
 
@@ -109,7 +111,7 @@ namespace Com.WhyJam.Anongj
         public override void OnJoinedRoom()
         {
             base.OnJoinedRoom();
-            //PhotonNetwork.LoadLevel("MainGame");
+            // PhotonNetwork.LoadLevel("MainGame");
             PhotonNetwork.LoadLevel("MPTest");
         }
     }

@@ -10,9 +10,12 @@ public class GameManager : MonoBehaviour
     [SerializeField] GameObject gameCanvas;
     [SerializeField] GameObject sceneCamera;
 
+    [SerializeField] UnityEngine.UI.Text roomNameText;
+
     private void Awake()
     {
         gameCanvas.SetActive(true);
+        roomNameText.text += PhotonNetwork.CurrentRoom.Name;
     }
 
     public void SpawnPlayer()
