@@ -76,7 +76,7 @@ public class AnonController : MonoBehaviour
                 gamerTag.text = photonView.Owner.NickName;
 
             if(playerCanvas)
-                playerCanvas.SetActive(false); // TODO ocultar en la versión final
+                playerCanvas.SetActive(true); // TODO ocultar en la versión final
         }
     }
 }
