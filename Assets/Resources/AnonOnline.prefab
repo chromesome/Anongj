@@ -530,6 +530,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   mov: {x: 0, y: 0}
+  currentIndex: 0
   stretch: 0.1
   squash: 0.1
   faceOffset: 0.1
@@ -611,6 +612,8 @@ MonoBehaviour:
   OwnershipTransfer: 0
   observableSearch: 2
   ObservedComponents:
+  - {fileID: 5298795188926833870}
+  - {fileID: 5298795188926833861}
   - {fileID: 8377273122071341068}
   sceneViewId: 10
   InstantiationId: 0
@@ -666,7 +669,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &5523325138478592739
 RectTransform:
   m_ObjectHideFlags: 0

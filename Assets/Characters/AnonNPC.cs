@@ -24,7 +24,7 @@ public class AnonNPC : MonoBehaviourPun, IPunObservable
 
         Global gl = GameObject.FindWithTag("Global").GetComponent<Global>();
         aAnim.body.GetComponent<SpriteRenderer>().sprite = gl.shapes[movType];
-        aAnim.face.GetComponent<SpriteRenderer>().sprite = gl.faces[Random.Range(2, 5)];
+        aAnim.face.GetComponent<SpriteRenderer>().sprite = gl.faces[Random.Range(0, 5)];
         runSp = gl.runSp;
         
     }
@@ -41,7 +41,7 @@ public class AnonNPC : MonoBehaviourPun, IPunObservable
     // Update is called once per frame
     void Update()
     {
-    	aAnim.mov = mov;
+    	aAnim.mov = mov.normalized;
     }
 
     [PunRPC]
@@ -99,7 +99,7 @@ public class AnonNPC : MonoBehaviourPun, IPunObservable
             movType = (int)stream.ReceiveNext();
             Global gl = GameObject.FindWithTag("Global").GetComponent<Global>();
             aAnim.body.GetComponent<SpriteRenderer>().sprite = gl.shapes[movType];
-            aAnim.face.GetComponent<SpriteRenderer>().sprite = gl.faces[Random.Range(2, 5)];
+            //aAnim.face.GetComponent<SpriteRenderer>().sprite = gl.faces[Random.Range(2, 5)];
         }
         else
         {

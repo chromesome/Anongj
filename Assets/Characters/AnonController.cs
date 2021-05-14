@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
 
-public class AnonController : MonoBehaviour
+public class AnonController : MonoBehaviour, IPunObservable
 {
     [SerializeField] GameObject playerCanvas;
     [SerializeField] Text gamerTag;
@@ -25,13 +25,15 @@ public class AnonController : MonoBehaviour
 
     void Start()
     {
+        shape = Random.Range(0,4);
+
         rb = GetComponent<Rigidbody2D>();
         coll = GetComponent<Collider2D>();
         aAnim = GetComponent<AnonAnimator>();
 
         Global gl = GameObject.FindWithTag("Global").GetComponent<Global>();
-        aAnim.body.GetComponent<SpriteRenderer>().sprite = gl.shapes[Random.Range(0,4)];
-        aAnim.face.GetComponent<SpriteRenderer>().sprite = gl.faces[Random.Range(2,5)];
+        aAnim.body.GetComponent<SpriteRenderer>().sprite = gl.shapes[shape];
+        aAnim.face.GetComponent<SpriteRenderer>().sprite = gl.faces[Random.Range(0,5)];
         runSp = gl.runSp;
     }
 
@@ -63,20 +65,39 @@ public class AnonController : MonoBehaviour
     {
         if(photonView.IsMine)
         {
-            if(gamerTag)
-                gamerTag.text = nickName;
+            if(gamerTag){
+                //gamerTag.text = nickName;
+            }
 
-            if(playerCanvas)
-                playerCanvas.SetActive(true);
+            if(playerCanvas){
+                //playerCanvas.SetActive(true);
+            }
 
         }
         else
         {
-            if(gamerTag)
-                gamerTag.text = photonView.Owner.NickName;
+            if(gamerTag){
+                //gamerTag.text = photonView.Owner.NickName;
+            }
 
-            if(playerCanvas)
-                playerCanvas.SetActive(true); // TODO ocultar en la versión final
+            if(playerCanvas){
+                //playerCanvas.SetActive(true); // TODO ocultar en la versión final
+            }
+        }
+    }
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+
+        if(stream.IsReading)
+        {
+            shape = (int)stream.ReceiveNext();
+            Global gl = GameObject.FindWithTag("Global").GetComponent<Global>();
+            aAnim.body.GetComponent<SpriteRenderer>().sprite = gl.shapes[shape];
+            //aAnim.face.GetComponent<SpriteRenderer>().sprite = gl.faces[Random.Range(2, 5)];
+        }
+        else
+        {
+            stream.SendNext(shape);
         }
     }
 }
