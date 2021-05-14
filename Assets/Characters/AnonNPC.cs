@@ -1,8 +1,9 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
-public class AnonNPC : MonoBehaviour
+public class AnonNPC : MonoBehaviourPun, IPunObservable
 {
     float runSp;
 
@@ -13,7 +14,7 @@ public class AnonNPC : MonoBehaviour
     public int movType;
     Vector2 mov;
     // Start is called before the first frame update
-    void Start()
+    void Awake()
     {
         movType = Random.Range(0,4);
 
@@ -23,10 +24,18 @@ public class AnonNPC : MonoBehaviour
 
         Global gl = GameObject.FindWithTag("Global").GetComponent<Global>();
         aAnim.body.GetComponent<SpriteRenderer>().sprite = gl.shapes[movType];
-        aAnim.face.GetComponent<SpriteRenderer>().sprite = gl.faces[Random.Range(2,5)];
+        aAnim.face.GetComponent<SpriteRenderer>().sprite = gl.faces[Random.Range(2, 5)];
         runSp = gl.runSp;
-        EmpezarMovimiento();
-        TurnRandom();
+        
+    }
+
+    private void Start()
+    {
+        if(photonView.IsMine)
+        {
+            EmpezarMovimiento();
+            TurnRandom();
+        }
     }
 
     // Update is called once per frame
@@ -35,6 +44,7 @@ public class AnonNPC : MonoBehaviour
     	aAnim.mov = mov;
     }
 
+    [PunRPC]
     void EmpezarMovimiento(){
     	int variar = 0;
     	int intentos = 0;
@@ -79,5 +89,21 @@ public class AnonNPC : MonoBehaviour
     void TurnRandom(){
     	Voltear();
     	Invoke("TurnRandom",Random.Range(0f,3f));
+    }
+
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+
+        if(stream.IsReading)
+        {
+            movType = (int)stream.ReceiveNext();
+            Global gl = GameObject.FindWithTag("Global").GetComponent<Global>();
+            aAnim.body.GetComponent<SpriteRenderer>().sprite = gl.shapes[movType];
+            aAnim.face.GetComponent<SpriteRenderer>().sprite = gl.faces[Random.Range(2, 5)];
+        }
+        else
+        {
+            stream.SendNext(movType);
+        }
     }
 }
