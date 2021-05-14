@@ -3,7 +3,12 @@ guid: 4f79ebf83f803f34d8cd86418a9f6140
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - playerPrefab: {fileID: 5298795188926833868, guid: 951a66807b170e24fae0091e0a6e85c3,
+      type: 3}
+  - gameCanvas: {instanceID: 0}
+  - sceneCamera: {instanceID: 0}
+  - roomNameText: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

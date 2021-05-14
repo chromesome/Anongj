@@ -72,7 +72,7 @@ namespace Com.WhyJam.Anongj
         {
             usernameMenu.SetActive(false);
             PhotonNetwork.NickName = usernameInput.text;
-            userName.text += PhotonNetwork.NickName;
+            userName.text = PhotonNetwork.NickName;
             controlPanel.SetActive(true);
         }
 

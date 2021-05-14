@@ -1,10 +1,12 @@
-﻿using System.Collections;
+﻿using Photon.Pun;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class AnonAnimator : MonoBehaviour
+public class AnonAnimator : MonoBehaviourPun, IPunObservable
 {
     public Vector2 mov;
+    public int currentIndex;
 
     public float stretch;
     public float squash;
@@ -23,7 +25,8 @@ public class AnonAnimator : MonoBehaviour
 
     void Update()
     {
-        AnimationValues();
+        if(photonView.IsMine)
+            AnimationValues();
     }
 
     void AnimationValues(){
@@ -36,6 +39,20 @@ public class AnonAnimator : MonoBehaviour
             face.transform.position = facePosition.position +  new Vector3 (mov.x, mov.y, 0f)*faceOffset;
         } else {
             face.transform.position = facePosition.position;
+        }
+    }
+
+    public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
+    {
+        // Esto no le gusta, mejor hacerlo en AnonNPC (y AnonController) o pasarle el movType y actualizar el skin con el index
+        if (stream.IsWriting)
+        {
+            stream.SendNext(currentIndex);
+            //stream.SendNext(body.transform.localScale);
+        }
+        else
+        {
+            currentIndex = (int)stream.ReceiveNext();
         }
     }
 }
