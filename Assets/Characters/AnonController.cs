@@ -1,11 +1,14 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using Photon.Pun;
 
 public class AnonController : MonoBehaviour
 {
-    private PhotonView PV;
+    [SerializeField] GameObject playerCanvas;
+    [SerializeField] Text gamerTag;
+    [SerializeField] PhotonView photonView;
     
     float runSp;
     Rigidbody2D rb;
@@ -15,9 +18,13 @@ public class AnonController : MonoBehaviour
 
     int shape;
 
+    private void Awake()
+    {
+        setGameTag(PhotonNetwork.NickName);
+    }
+
     void Start()
     {
-        PV = GetComponent<PhotonView>();
         rb = GetComponent<Rigidbody2D>();
         coll = GetComponent<Collider2D>();
         aAnim = GetComponent<AnonAnimator>();
@@ -30,7 +37,7 @@ public class AnonController : MonoBehaviour
 
     void Update()
     {
-        if(PV.IsMine)
+        if(photonView.IsMine)
         {
             Vector2 mov = new Vector2 (Input.GetAxisRaw("Horizontal"),Input.GetAxisRaw("Vertical"));
             rb.velocity = mov.normalized * runSp;
@@ -50,5 +57,26 @@ public class AnonController : MonoBehaviour
             shape = 0;
         }
         aAnim.body.GetComponent<SpriteRenderer>().sprite = gl.shapes[shape];
+    }
+
+    void setGameTag(string nickName)
+    {
+        if(photonView.IsMine)
+        {
+            if(gamerTag)
+                gamerTag.text = nickName;
+
+            if(playerCanvas)
+                playerCanvas.SetActive(true);
+
+        }
+        else
+        {
+            if(gamerTag)
+                gamerTag.text = photonView.Owner.NickName;
+
+            if(playerCanvas)
+                playerCanvas.SetActive(false); // TODO ocultar en la versión final
+        }
     }
 }
