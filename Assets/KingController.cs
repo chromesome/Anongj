@@ -22,6 +22,8 @@ public class KingController : MonoBehaviour
     [SerializeField] float groundCameraMoveSpeed = 0.004f;
     [SerializeField] float groundCameraDeadzone = 3f;
 
+    [SerializeField] PhotonView photonView;
+
     //public float mouseDistanceFromOrigin;
 
     GameObject currentCamera;
@@ -31,64 +33,80 @@ public class KingController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        kingCamera.SetActive(true);
-        currentCamera = kingCamera;
-        groundCamera.SetActive(false);
+        if(photonView.IsMine)
+        {
+            kingCamera.SetActive(true);
+            currentCamera = kingCamera;
+            groundCamera.SetActive(false);
+        }
+        else
+        {
+            this.gameObject.SetActive(false);
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-
-        // Left click to kill >:(
-        if(Input.GetMouseButtonDown(0))
+        if(photonView.IsMine)
         {
-            RaycastHit2D hit = Physics2D.Raycast(GetMousePosition(), Vector2.zero);
-            if(hit.collider != null)
+            // Left click to kill >:(
+            if(Input.GetMouseButtonDown(0))
             {
-                Debug.Log(hit.collider.gameObject.name);
-                IKillable victim = hit.transform.gameObject.GetComponent<IKillable>();
-                if(victim != null)
+                RaycastHit2D hit = Physics2D.Raycast(GetMousePosition(), Vector2.zero);
+                if(hit.collider != null)
                 {
-                    victim.Kill();
+                    Debug.Log(hit.collider.gameObject.name);
+                    IKillable victim = hit.transform.gameObject.GetComponent<IKillable>();
+                    if(victim != null)
+                    {
+                        if(PhotonNetwork.IsConnected && PhotonNetwork.InRoom)
+                        {
+                            hit.transform.gameObject.GetComponent<PhotonView>().RPC("Kill", RpcTarget.All);
+                        }
+                        else
+                        {
+                            victim.Kill();
+                        }
+                    }
+                }
+            
+            }
+
+            // Right click to zoom in / out
+            if(Input.GetMouseButtonDown(1))
+            {
+                isObserving = !isObserving;
+
+                if (isObserving)
+                {
+                    groundAnchor.transform.position = GetMousePosition();
+
+                    kingCamera.SetActive(false);
+                    highCanvas.SetActive(false);
+
+                    groundCamera.SetActive(true);
+                    currentCamera = groundCamera;
+
+                }
+                else
+                {
+                    kingCamera.SetActive(true);
+                    groundCamera.SetActive(false);
+                    currentCamera = kingCamera;
+                    highCanvas.SetActive(true);
                 }
             }
-            
-        }
 
-        // Right click to zoom in / out
-        if(Input.GetMouseButtonDown(1))
-        {
-            isObserving = !isObserving;
-
-            if (isObserving)
+            if(isObserving)
             {
-                groundAnchor.transform.position = GetMousePosition();
+                Vector2 mousePos = GetMousePosition();
+                float mouseDistanceFromOrigin = Vector2.Distance(groundAnchor.transform.position, mousePos);
 
-                kingCamera.SetActive(false);
-                highCanvas.SetActive(false);
-
-                groundCamera.SetActive(true);
-                currentCamera = groundCamera;
-
-            }
-            else
-            {
-                kingCamera.SetActive(true);
-                groundCamera.SetActive(false);
-                currentCamera = kingCamera;
-                highCanvas.SetActive(true);
-            }
-        }
-
-        if(isObserving)
-        {
-            Vector2 mousePos = GetMousePosition();
-            float mouseDistanceFromOrigin = Vector2.Distance(groundAnchor.transform.position, mousePos);
-
-            if (mouseDistanceFromOrigin > groundCameraDeadzone)
-            {
-                groundAnchor.transform.position = Vector2.Lerp(groundAnchor.transform.position, mousePos, groundCameraMoveSpeed);
+                if (mouseDistanceFromOrigin > groundCameraDeadzone)
+                {
+                    groundAnchor.transform.position = Vector2.Lerp(groundAnchor.transform.position, mousePos, groundCameraMoveSpeed);
+                }
             }
         }
     }

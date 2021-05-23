@@ -9,6 +9,8 @@ public class AnonController : MonoBehaviour, IPunObservable, IKillable
     [SerializeField] GameObject playerCanvas;
     [SerializeField] Text gamerTag;
     [SerializeField] PhotonView photonView;
+    [SerializeField] GameObject playerCamera;
+
     
     float runSp;
     Rigidbody2D rb;
@@ -25,6 +27,11 @@ public class AnonController : MonoBehaviour, IPunObservable, IKillable
 
     void Start()
     {
+        if(photonView.IsMine)
+        {
+            playerCamera.SetActive(true);
+        }
+
         shape = Random.Range(0,4);
 
         rb = GetComponent<Rigidbody2D>();
@@ -48,6 +55,26 @@ public class AnonController : MonoBehaviour, IPunObservable, IKillable
             {
                 ChangeShape();
             }
+
+            if(Input.GetKeyDown(KeyCode.Alpha1))
+            {
+                ChangeShape(0);
+            }
+
+            if (Input.GetKeyDown(KeyCode.Alpha2))
+            {
+                ChangeShape(1);
+            }
+
+            if (Input.GetKeyDown(KeyCode.Alpha3))
+            {
+                ChangeShape(2);
+            }
+
+            if (Input.GetKeyDown(KeyCode.Alpha4))
+            {
+                ChangeShape(3);
+            }
         }
     }
     void ChangeShape()
@@ -59,6 +86,13 @@ public class AnonController : MonoBehaviour, IPunObservable, IKillable
             shape = 0;
         }
         aAnim.body.GetComponent<SpriteRenderer>().sprite = gl.shapes[shape];
+    }
+
+    void ChangeShape(int skinId)
+    {
+        Global gl = GameObject.FindWithTag("Global").GetComponent<Global>();
+        
+        aAnim.body.GetComponent<SpriteRenderer>().sprite = gl.shapes[skinId];
     }
 
     void setGameTag(string nickName)
@@ -101,6 +135,7 @@ public class AnonController : MonoBehaviour, IPunObservable, IKillable
         }
     }
 
+    [PunRPC]
     public void Kill()
     {
         Debug.Log("Killed player " + photonView.Owner.NickName);

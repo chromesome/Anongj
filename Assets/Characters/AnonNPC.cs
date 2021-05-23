@@ -44,7 +44,7 @@ public class AnonNPC : MonoBehaviourPun, IPunObservable, IKillable
     // Update is called once per frame
     void Update()
     {
-        aAnim.mov = mov.normalized;
+        //aAnim.mov = mov.normalized;
         if(!isAlive)
         {
             rb.velocity = Vector2.zero;
@@ -89,8 +89,17 @@ public class AnonNPC : MonoBehaviourPun, IPunObservable, IKillable
     }
 
     void Voltear(){
-    	mov = mov*-1;
-    	rb.velocity = mov;
+        if(rb.velocity == Vector2.zero)
+        {
+    	    mov = mov*-1;
+    	    rb.velocity = mov;
+            aAnim.mov = mov.normalized;
+        }
+        else
+        {
+            rb.velocity = Vector2.zero;
+            aAnim.mov = Vector2.zero.normalized;
+        }
     }
     void OnCollisionEnter2D(){
     	Voltear();

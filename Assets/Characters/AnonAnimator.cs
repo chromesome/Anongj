@@ -25,9 +25,12 @@ public class AnonAnimator : MonoBehaviourPun, IPunObservable
 
     void Update()
     {
+        AnimationValues();
+
         if(photonView.IsMine)
-            AnimationValues();
+        {
             transform.position = new Vector3 (transform.position.x,transform.position.y,transform.position.y);
+        }
     }
 
     void AnimationValues(){
@@ -49,11 +52,13 @@ public class AnonAnimator : MonoBehaviourPun, IPunObservable
         if (stream.IsWriting)
         {
             stream.SendNext(currentIndex);
+            stream.SendNext(mov);
             //stream.SendNext(body.transform.localScale);
         }
         else
         {
             currentIndex = (int)stream.ReceiveNext();
+            mov = (Vector2)stream.ReceiveNext();
         }
     }
 }
