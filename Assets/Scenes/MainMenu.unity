@@ -785,7 +785,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 01bd0bc512dc0f24e8988a6c8d7cd49d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxPlayers: 5
+  maxPlayers: 20
   usernameMenu: {fileID: 478584411}
   controlPanel: {fileID: 1075908335}
   usernameInput: {fileID: 1682022488}

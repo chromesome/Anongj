@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 
-public class AnonNPC : MonoBehaviourPun, IPunObservable
+public class AnonNPC : MonoBehaviourPun, IPunObservable, IKillable
 {
     float runSp;
 
@@ -13,6 +13,9 @@ public class AnonNPC : MonoBehaviourPun, IPunObservable
 
     public int movType;
     Vector2 mov;
+
+    public bool isAlive = true;
+
     // Start is called before the first frame update
     void Awake()
     {
@@ -41,7 +44,13 @@ public class AnonNPC : MonoBehaviourPun, IPunObservable
     // Update is called once per frame
     void Update()
     {
-    	aAnim.mov = mov.normalized;
+        aAnim.mov = mov.normalized;
+        if(!isAlive)
+        {
+            rb.velocity = Vector2.zero;
+            Global gl = GameObject.FindWithTag("Global").GetComponent<Global>();
+            aAnim.face.GetComponent<SpriteRenderer>().sprite = gl.faces[0];
+        }
     }
 
     [PunRPC]
@@ -87,8 +96,11 @@ public class AnonNPC : MonoBehaviourPun, IPunObservable
     	Voltear();
     }
     void TurnRandom(){
-    	Voltear();
-    	Invoke("TurnRandom",Random.Range(0f,3f));
+        if (isAlive)
+        {
+    	    Voltear();
+    	    Invoke("TurnRandom",Random.Range(0f,3f));
+        }
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
@@ -105,5 +117,11 @@ public class AnonNPC : MonoBehaviourPun, IPunObservable
         {
             stream.SendNext(movType);
         }
+    }
+
+    [PunRPC]
+    public void Kill()
+    {
+        isAlive = false;
     }
 }

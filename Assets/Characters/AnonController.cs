@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
 
-public class AnonController : MonoBehaviour, IPunObservable
+public class AnonController : MonoBehaviour, IPunObservable, IKillable
 {
     [SerializeField] GameObject playerCanvas;
     [SerializeField] Text gamerTag;
@@ -99,5 +99,10 @@ public class AnonController : MonoBehaviour, IPunObservable
         {
             stream.SendNext(shape);
         }
+    }
+
+    public void Kill()
+    {
+        Debug.Log("Killed player " + photonView.Owner.NickName);
     }
 }

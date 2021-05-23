@@ -14,6 +14,9 @@ public class GameManager : MonoBehaviour
     [SerializeField] Text roomNameText;
     [SerializeField] Text pingText;
 
+    // Hacer que se vuelva a abrir el menu en lugar de duplicar el boton
+    [SerializeField] GameObject leaveRoom2;
+
     private void Awake()
     {
         gameCanvas.SetActive(true);
@@ -37,7 +40,6 @@ public class GameManager : MonoBehaviour
         if(PhotonNetwork.IsConnectedAndReady && PhotonNetwork.InRoom)
         {
             PhotonNetwork.Instantiate(playerPrefab.name, Vector3.zero, Quaternion.identity, 0);
-
         }
         else
         {
@@ -46,6 +48,7 @@ public class GameManager : MonoBehaviour
         }
 
         gameCanvas.SetActive(false);
+        leaveRoom2.SetActive(true);
         //sceneCamera.SetActive(false);
     }
 
