@@ -14,6 +14,9 @@ public class AnonNPC : MonoBehaviourPun, IPunObservable, IKillable
     public int movType;
     Vector2 mov;
 
+    public delegate void KilledNPC();
+    public static event KilledNPC OnKilledNPC;
+
     public bool isAlive = true;
 
     // Start is called before the first frame update
@@ -27,7 +30,7 @@ public class AnonNPC : MonoBehaviourPun, IPunObservable, IKillable
 
         Global gl = GameObject.FindWithTag("Global").GetComponent<Global>();
         aAnim.body.GetComponent<SpriteRenderer>().sprite = gl.shapes[movType];
-        aAnim.face.GetComponent<SpriteRenderer>().sprite = gl.faces[Random.Range(0, 5)];
+        aAnim.face.GetComponent<SpriteRenderer>().sprite = gl.faces[Random.Range(2, 5)];
         runSp = gl.runSp;
         
     }
@@ -131,6 +134,13 @@ public class AnonNPC : MonoBehaviourPun, IPunObservable, IKillable
     [PunRPC]
     public void Kill()
     {
-        isAlive = false;
+        if(isAlive)
+        {
+            isAlive = false;
+            if (OnKilledNPC != null)
+            {
+                OnKilledNPC();
+            }
+        }
     }
 }

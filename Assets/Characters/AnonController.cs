@@ -11,6 +11,7 @@ public class AnonController : MonoBehaviour, IPunObservable, IKillable
     [SerializeField] PhotonView photonView;
     [SerializeField] GameObject playerCamera;
 
+    public bool isAlive = true;
     
     float runSp;
     Rigidbody2D rb;
@@ -19,6 +20,9 @@ public class AnonController : MonoBehaviour, IPunObservable, IKillable
     AnonAnimator aAnim;
 
     int shape;
+
+    public delegate void KilledAnomie(string gamerTag);
+    public static event KilledAnomie OnKillPlayer;
 
     private void Awake()
     {
@@ -40,13 +44,13 @@ public class AnonController : MonoBehaviour, IPunObservable, IKillable
 
         Global gl = GameObject.FindWithTag("Global").GetComponent<Global>();
         aAnim.body.GetComponent<SpriteRenderer>().sprite = gl.shapes[shape];
-        aAnim.face.GetComponent<SpriteRenderer>().sprite = gl.faces[Random.Range(0,5)];
+        aAnim.face.GetComponent<SpriteRenderer>().sprite = gl.faces[Random.Range(2,5)];
         runSp = gl.runSp;
     }
 
     void Update()
     {
-        if(photonView.IsMine)
+        if(photonView.IsMine && isAlive)
         {
             Vector2 mov = new Vector2 (Input.GetAxisRaw("Horizontal"),Input.GetAxisRaw("Vertical"));
             rb.velocity = mov.normalized * runSp;
@@ -76,6 +80,15 @@ public class AnonController : MonoBehaviour, IPunObservable, IKillable
                 ChangeShape(3);
             }
         }
+        else
+        {
+            if(!isAlive)
+            {
+                Global gl = GameObject.FindWithTag("Global").GetComponent<Global>();
+                aAnim.face.GetComponent<SpriteRenderer>().sprite = gl.faces[0];
+            }
+
+        }
     }
     void ChangeShape()
     {
@@ -91,8 +104,8 @@ public class AnonController : MonoBehaviour, IPunObservable, IKillable
     void ChangeShape(int skinId)
     {
         Global gl = GameObject.FindWithTag("Global").GetComponent<Global>();
-        
-        aAnim.body.GetComponent<SpriteRenderer>().sprite = gl.shapes[skinId];
+        shape = skinId;
+        aAnim.body.GetComponent<SpriteRenderer>().sprite = gl.shapes[shape];
     }
 
     void setGameTag(string nickName)
@@ -138,6 +151,11 @@ public class AnonController : MonoBehaviour, IPunObservable, IKillable
     [PunRPC]
     public void Kill()
     {
-        Debug.Log("Killed player " + photonView.Owner.NickName);
+        if(isAlive)
+        {
+            Debug.Log("Killed player " + photonView.Owner.NickName);
+            isAlive = false;
+            OnKillPlayer(PhotonNetwork.NickName);
+        }
     }
 }

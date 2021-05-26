@@ -602,6 +602,7 @@ MonoBehaviour:
   gamerTag: {fileID: 1847073207463366884}
   photonView: {fileID: 1460186646552481323}
   playerCamera: {fileID: 3329084025146730812}
+  isAlive: 1
 --- !u!114 &5298795188926833861
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -656,7 +657,7 @@ CircleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0, y: 0}
+  m_Offset: {x: 0, y: 0.51}
   serializedVersion: 2
   m_Radius: 0.5
 --- !u!95 &5298795188926833866

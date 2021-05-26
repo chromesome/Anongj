@@ -33,7 +33,7 @@ public class KingController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        if(photonView.IsMine)
+        if(!PhotonNetwork.InRoom || photonView.IsMine)
         {
             kingCamera.SetActive(true);
             currentCamera = kingCamera;
@@ -48,7 +48,7 @@ public class KingController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if(photonView.IsMine)
+        if(!PhotonNetwork.InRoom || photonView.IsMine)
         {
             // Left click to kill >:(
             if(Input.GetMouseButtonDown(0))
