@@ -42,6 +42,7 @@ namespace Com.WhyJam.Anongj
             PhotonNetwork.ConnectUsingSettings();
             usernameMenu.SetActive(false);
             controlPanel.SetActive(false);
+            startButton.SetActive(false);
         }
 
         public override void OnConnectedToMaster()
@@ -53,7 +54,7 @@ namespace Com.WhyJam.Anongj
 
         public void OnChangeUserNameInput()
         {
-            if(usernameInput.text.Length > 3)
+            if(usernameInput.text.Length >= 3)
             {
                 startButton.SetActive(true);
             }
@@ -84,9 +85,12 @@ namespace Com.WhyJam.Anongj
 
         public void JoinGame()
         {
-            RoomOptions roomOptions = new RoomOptions();
-            roomOptions.MaxPlayers = maxPlayers;
-            PhotonNetwork.JoinOrCreateRoom(joinGameInput.text, roomOptions, TypedLobby.Default);
+            if(joinGameInput.text.Length > 0)
+            {
+                RoomOptions roomOptions = new RoomOptions();
+                roomOptions.MaxPlayers = maxPlayers;
+                PhotonNetwork.JoinOrCreateRoom(joinGameInput.text, roomOptions, TypedLobby.Default);
+            }
         }
 
         // Deprecate

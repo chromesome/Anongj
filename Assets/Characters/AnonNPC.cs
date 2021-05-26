@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Photon.Pun;
 
-public class AnonNPC : MonoBehaviourPun, IPunObservable
+public class AnonNPC : MonoBehaviourPun, IPunObservable, IKillable
 {
     float runSp;
 
@@ -13,6 +13,12 @@ public class AnonNPC : MonoBehaviourPun, IPunObservable
 
     public int movType;
     Vector2 mov;
+
+    public delegate void KilledNPC();
+    public static event KilledNPC OnKilledNPC;
+
+    public bool isAlive = true;
+
     // Start is called before the first frame update
     void Awake()
     {
@@ -24,7 +30,7 @@ public class AnonNPC : MonoBehaviourPun, IPunObservable
 
         Global gl = GameObject.FindWithTag("Global").GetComponent<Global>();
         aAnim.body.GetComponent<SpriteRenderer>().sprite = gl.shapes[movType];
-        aAnim.face.GetComponent<SpriteRenderer>().sprite = gl.faces[Random.Range(0, 5)];
+        aAnim.face.GetComponent<SpriteRenderer>().sprite = gl.faces[Random.Range(2, 5)];
         runSp = gl.runSp;
         
     }
@@ -41,7 +47,13 @@ public class AnonNPC : MonoBehaviourPun, IPunObservable
     // Update is called once per frame
     void Update()
     {
-    	aAnim.mov = mov.normalized;
+        //aAnim.mov = mov.normalized;
+        if(!isAlive)
+        {
+            rb.velocity = Vector2.zero;
+            Global gl = GameObject.FindWithTag("Global").GetComponent<Global>();
+            aAnim.face.GetComponent<SpriteRenderer>().sprite = gl.faces[0];
+        }
     }
 
     [PunRPC]
@@ -80,15 +92,27 @@ public class AnonNPC : MonoBehaviourPun, IPunObservable
     }
 
     void Voltear(){
-    	mov = mov*-1;
-    	rb.velocity = mov;
+        if(rb.velocity == Vector2.zero)
+        {
+    	    mov = mov*-1;
+    	    rb.velocity = mov;
+            aAnim.mov = mov.normalized;
+        }
+        else
+        {
+            rb.velocity = Vector2.zero;
+            aAnim.mov = Vector2.zero.normalized;
+        }
     }
     void OnCollisionEnter2D(){
     	Voltear();
     }
     void TurnRandom(){
-    	Voltear();
-    	Invoke("TurnRandom",Random.Range(0f,3f));
+        if (isAlive)
+        {
+    	    Voltear();
+    	    Invoke("TurnRandom",Random.Range(0f,3f));
+        }
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
@@ -104,6 +128,19 @@ public class AnonNPC : MonoBehaviourPun, IPunObservable
         else
         {
             stream.SendNext(movType);
+        }
+    }
+
+    [PunRPC]
+    public void Kill()
+    {
+        if(isAlive)
+        {
+            isAlive = false;
+            if (OnKilledNPC != null)
+            {
+                OnKilledNPC();
+            }
         }
     }
 }

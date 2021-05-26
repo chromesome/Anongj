@@ -4,11 +4,14 @@ using UnityEngine;
 using UnityEngine.UI;
 using Photon.Pun;
 
-public class AnonController : MonoBehaviour, IPunObservable
+public class AnonController : MonoBehaviour, IPunObservable, IKillable
 {
     [SerializeField] GameObject playerCanvas;
     [SerializeField] Text gamerTag;
     [SerializeField] PhotonView photonView;
+    [SerializeField] GameObject playerCamera;
+
+    public bool isAlive = true;
     
     float runSp;
     Rigidbody2D rb;
@@ -18,6 +21,9 @@ public class AnonController : MonoBehaviour, IPunObservable
 
     int shape;
 
+    public delegate void KilledAnomie(string gamerTag);
+    public static event KilledAnomie OnKillPlayer;
+
     private void Awake()
     {
         setGameTag(PhotonNetwork.NickName);
@@ -25,6 +31,11 @@ public class AnonController : MonoBehaviour, IPunObservable
 
     void Start()
     {
+        if(photonView.IsMine)
+        {
+            playerCamera.SetActive(true);
+        }
+
         shape = Random.Range(0,4);
 
         rb = GetComponent<Rigidbody2D>();
@@ -33,13 +44,13 @@ public class AnonController : MonoBehaviour, IPunObservable
 
         Global gl = GameObject.FindWithTag("Global").GetComponent<Global>();
         aAnim.body.GetComponent<SpriteRenderer>().sprite = gl.shapes[shape];
-        aAnim.face.GetComponent<SpriteRenderer>().sprite = gl.faces[Random.Range(0,5)];
+        aAnim.face.GetComponent<SpriteRenderer>().sprite = gl.faces[Random.Range(2,5)];
         runSp = gl.runSp;
     }
 
     void Update()
     {
-        if(photonView.IsMine)
+        if(photonView.IsMine && isAlive)
         {
             Vector2 mov = new Vector2 (Input.GetAxisRaw("Horizontal"),Input.GetAxisRaw("Vertical"));
             rb.velocity = mov.normalized * runSp;
@@ -48,6 +59,35 @@ public class AnonController : MonoBehaviour, IPunObservable
             {
                 ChangeShape();
             }
+
+            if(Input.GetKeyDown(KeyCode.Alpha1))
+            {
+                ChangeShape(0);
+            }
+
+            if (Input.GetKeyDown(KeyCode.Alpha2))
+            {
+                ChangeShape(1);
+            }
+
+            if (Input.GetKeyDown(KeyCode.Alpha3))
+            {
+                ChangeShape(2);
+            }
+
+            if (Input.GetKeyDown(KeyCode.Alpha4))
+            {
+                ChangeShape(3);
+            }
+        }
+        else
+        {
+            if(!isAlive)
+            {
+                Global gl = GameObject.FindWithTag("Global").GetComponent<Global>();
+                aAnim.face.GetComponent<SpriteRenderer>().sprite = gl.faces[0];
+            }
+
         }
     }
     void ChangeShape()
@@ -58,6 +98,13 @@ public class AnonController : MonoBehaviour, IPunObservable
         {
             shape = 0;
         }
+        aAnim.body.GetComponent<SpriteRenderer>().sprite = gl.shapes[shape];
+    }
+
+    void ChangeShape(int skinId)
+    {
+        Global gl = GameObject.FindWithTag("Global").GetComponent<Global>();
+        shape = skinId;
         aAnim.body.GetComponent<SpriteRenderer>().sprite = gl.shapes[shape];
     }
 
@@ -98,6 +145,17 @@ public class AnonController : MonoBehaviour, IPunObservable
         else
         {
             stream.SendNext(shape);
+        }
+    }
+
+    [PunRPC]
+    public void Kill()
+    {
+        if(isAlive)
+        {
+            Debug.Log("Killed player " + photonView.Owner.NickName);
+            isAlive = false;
+            OnKillPlayer(PhotonNetwork.NickName);
         }
     }
 }
